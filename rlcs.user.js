@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RLCS
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.way too much
 // @description  Parrot-like functionality for Reddit Live
 // @author       FatherDerp, Stjerneklar
 // @include      https://www.reddit.com/live/*
@@ -67,7 +67,7 @@ ol.liveupdate-listing { \
     max-width: 76%; \
     overflow-y: scroll; \
     padding-right: 15px; \
-    height:800px!important; \
+    height:600px!important; \
     margin-bottom: 150px; \
 } \
 .liveupdate-listing li.liveupdate {  border-top:1px solid grey;padding-top:2px; } \
