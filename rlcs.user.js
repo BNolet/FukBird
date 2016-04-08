@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RLCS
 // @namespace    http://tampermonkey.net/
-// @version      0.way too much
+// @version      0.3
 // @description  Parrot-like functionality for Reddit Live
 // @author       FatherDerp, Stjerneklar
 // @include      https://www.reddit.com/live/*
@@ -9,6 +9,10 @@
 // @grant   GM_addStyle
 // ==/UserScript==                
 $(document).ready(function() {
+    
+    /*ul = $(".liveupdate-listing"); 
+    ul.children().each(function(i,li){ul.prepend(li)})*/
+    
   $(document).keydown(function(e){
       if (e.keyCode == 13 && e.ctrlKey == true) {
           $(".save-button .btn").click();  
@@ -63,7 +67,7 @@ ol.liveupdate-listing { \
     max-width: 76%; \
     overflow-y: scroll; \
     padding-right: 15px; \
-    height:700px!important; \
+    height:800px!important; \
     margin-bottom: 150px; \
 } \
 .liveupdate-listing li.liveupdate {  border-top:1px solid grey;padding-top:2px; } \
@@ -87,6 +91,13 @@ a.author { \
     max-width: 100%; \
     margin: 0; \
 } \
+ol.liveupdate-listing { \
+    display: flex; \
+    flex-direction: column-reverse; \
+} \
+.liveupdate-listing li.liveupdate {height: auto!important;overflow:visible;} \
+body {   overflow: hidden;  } \
+.footer-parent {    display: none; } \
 ");
 });
 
