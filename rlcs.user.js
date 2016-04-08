@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RLCS
 // @namespace    http://tampermonkey.net/
-// @version      0.way too much
+// @version      0.4 
 // @description  Parrot-like functionality for Reddit Live
 // @author       FatherDerp, Stjerneklar
 // @include      https://www.reddit.com/live/*
@@ -9,12 +9,9 @@
 // @grant   GM_addStyle
 // ==/UserScript==                
 $(document).ready(function() {
-    
-    /*ul = $(".liveupdate-listing"); 
-    ul.children().each(function(i,li){ul.prepend(li)})*/
-    
+  
   $(document).keydown(function(e){
-      if (e.keyCode == 13 && e.ctrlKey == true) {
+      if (e.keyCode == 13) {
           $(".save-button .btn").click();  
       }
   });   
@@ -36,7 +33,7 @@ $(document).ready(function() {
         #new-update-form .usertext {  max-width: none;} \
 .usertext-edit .md {min-width: 100%!important;} \
 .content { \
-    width: 70%; \
+    width: 95%; \
     position:relative; \
 } \
 header#liveupdate-header { \
@@ -67,15 +64,16 @@ ol.liveupdate-listing { \
     max-width: 76%; \
     overflow-y: scroll; \
     padding-right: 15px; \
-    height:600px!important; \
+    height: calc(100vh - 250px); \
     margin-bottom: 150px; \
 } \
 .liveupdate-listing li.liveupdate {  border-top:1px solid grey;padding-top:2px; } \
 .liveupdate-listing li.liveupdate .body div.md { \
-    width: 90%; \
+    width: 84%; \
     display: block; \
     float: right; \
     margin-bottom:0; \
+    max-width: none; \
 } \
 a.author { \
     display: block; \
