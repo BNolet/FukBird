@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         RLCS
 // @namespace    http://tampermonkey.net/
-// @version      0.4 
-// @description  Parrot-like functionality for Reddit Live
+// @version      0.5 
+// @description  Chat-like functionality for Reddit Live
 // @author       FatherDerp, Stjerneklar
 // @include      https://www.reddit.com/live/*
 // @require      http://code.jquery.com/jquery-latest.js
@@ -15,6 +15,13 @@ $(document).ready(function() {
           $(".save-button .btn").click();  
       }
   });   
+    $('body').on('contextmenu', ".liveupdate .author", function (event) {
+        event.preventDefault();
+        var username = String($(this).text()).trim();
+        var source = String($(".usertext-edit.md-container textarea").val());
+        // Focus textarea and set the value of textarea
+        $(".usertext-edit.md-container textarea").focus().val("").val(source + " " + username + " ");
+    });
  
  /*add css styles, every line must end with \  */
       GM_addStyle(" \
@@ -94,7 +101,6 @@ ol.liveupdate-listing { \
     flex-direction: column-reverse; \
 } \
 .liveupdate-listing li.liveupdate {height: auto!important;overflow:visible;} \
-body {   overflow: hidden;  } \
 .footer-parent {    display: none; } \
 ");
 });
