@@ -31,100 +31,93 @@ $('.main-content aside.sidebar').appendTo('#rlc-sidebar');
     });
  
 });
- /*add css styles, every line must end with \  */
+/*add css styles, every line must end with \  */
       GM_addStyle(" \
-        .liveupdate-listing li.liveupdate ul.buttonrow { display: none!important;} \
-        .liveupdate-listing li.liveupdate .time {}   \
-        .liveupdate .body {max-width: none!important;}  \
-        aside.sidebar #discussions li {background:#404040;} \
-        .md a {color:#5ED7FF!important;} \
-        .sidebar a {color:#5ED7FF!important;} \
-        body.loggedin.liveupdate-app {background:#404040;color:white;} \
-        div.content{background:#404040;color:white;} \
-        div.md{color:white;} \
-        div#liveupdate-options {color:white;position: absolute;top: 19px;right: 18px;} \
-        aside.sidebar {background:#404040;!important} \
-        h2{color:white!important} \
-        #new-update-form .usertext {  max-width: none;} \
-        .usertext-edit .md {min-width: 100%!important;} \
-        .content { \
-            width: 95%; \
-            position:relative; \
-        } \
-        header#liveupdate-header { \
-            position: absolute; \
-            right: 10px; \
-            top:10px; \
-            width: 305px; \
-        } \
-        div#new-update-form { \
-            position: absolute; \
-            bottom: 5px; \
-            background: #161616; \
-            width: 74%; \
-            margin: 0; \
-            left: 10px; \
-        } \
-        .main-content { \
-            margin-top: 0; \
-            width: 100%; \
-        } \
-        aside.sidebar.side.md-container { \
-            position: absolute; \
-            right: 0; \
-            top: 190px; \
-            padding:10px; \
-        } \
-        ol.liveupdate-listing { \
-            max-width: 76%; \
-            overflow-y: scroll; \
-            padding-right: 15px; \
-            height: calc(100vh - 250px); \
-            margin-bottom: 150px; \
-        } \
-        .liveupdate-listing li.liveupdate {  border-top:1px solid grey;padding-top:2px; } \
-        .liveupdate-listing li.liveupdate .body div.md { \
-            width: 84%; \
-            display: block; \
-            float: right; \
-            margin-bottom:0; \
-            max-width: none; \
-        } \
-        a.author { \
-            display: block; \
-            width: 15%; \
-            float: left; \
-            } \
-        .liveupdate-listing li.liveupdate time { \
-            padding: 0; \
-            width: 15%; \
-            float:left; \
-        } \
-        .usertext-edit.md-container { \
-            max-width: 100%; \
-            margin: 0; \
-        } \
-        ol.liveupdate-listing { \
-            display: flex; \
-            flex-direction: column-reverse; \
-        } \
-        .liveupdate-listing li.liveupdate {height: auto!important;overflow:visible;} \
-        .footer-parent {    display: none; } \
-        #rlc-main { \
-            width: 70%; \
-            height: 100%; \
-            position: fixed; \
-            top: 63px; \
-            left:0; \
-        } \
-        #rlc-sidebar { \
-            width: 30%; \
-            height: 100%; \
-            position: fixed; \
-            top: 63px; \
-            right:0; \
-          display:block; \
-        } \
+#rlc-main { \
+    width: 70%; \
+    height: 100%; \
+    position: fixed; \
+    top: 63px; \
+    left:0; \
+} \
+#rlc-sidebar { \
+    width: 30%; \
+    height: 100%; \
+    position: fixed; \
+    top: 63px; \
+    right:0; \
+  display:block; \
+} \
+div#liveupdate-options {color:white;position: absolute;bottom: 60px;left: 5px;} \
+.footer-parent, .separator,\
+.liveupdate-listing li.liveupdate ul.buttonrow,\
+body > .content {display: none!important;}\
+.liveupdate .body {max-width: none!important;margin-bottom: 0!important;padding:2px!important;}  \
+#new-update-form .usertext {max-width: 100%;float: left;width: 92%;} \
+.usertext-edit .md {min-width: 100%!important;} \
+div#new-update-form textarea { height:25px;overflow:hidden;  } \
+div#new-update-form { \
+    width: 100%; \
+    margin: 0; \
+} \
+.usertext-edit.md-container { \
+    max-width: 100%; \
+    margin: 0; \
+} \
+aside.sidebar.side.md-container { \
+    max-width:100%;\
+    width:98%;\
+} \
+ol.liveupdate-listing { \
+    max-width: 100%; \
+    overflow-y: scroll;  \
+    height: calc(100vh - 130px); \
+    padding:5px;\
+    box-sizing:border-box;\
+} \
+.liveupdate-listing li.liveupdate {  border-top:1px solid grey;padding-top:2px; } \
+.liveupdate-listing li.liveupdate .body div.md {\
+    width: 86%;\
+    display: block;\
+    float: right;\
+    margin-bottom:0;\
+    max-width: none;\
+} \
+a.author {\
+    display: block;\
+    width: 12%;\
+    float: left;\
+    margin: 0;\
+    text-align: right;\
+    } \
+.liveupdate-listing li.liveupdate time {\
+    padding: 0;\
+    width: 12%;\
+    float:left;\
+    margin: 0;\
+    text-align: right;\
+} \
+.liveupdate-listing li.liveupdate time:before {\
+ display:none; \
+}  \
+ol.liveupdate-listing { \
+    display: flex; \
+    flex-direction: column-reverse; \
+} \
+.liveupdate-listing li.liveupdate {height: auto!important;overflow:visible;} \
+#liveupdate-header {\
+    width: 100%;\
+    margin:0!important;\
+    padding:0!important;\
+    text-align:center;\
+    max-width: none;\
+} \
+aside.sidebar #discussions li {background:#404040;} \
+.md a {color:#5ED7FF!important;} \
+.sidebar a {color:#5ED7FF!important;} \
+body.loggedin.liveupdate-app {background:#404040;color:white;} \
+div.content{background:#404040;color:white;} \
+div.md{color:white;} \
+aside.sidebar {background:#404040;!important} \
+h2{color:white!important} \
 ");
-
-
