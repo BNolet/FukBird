@@ -45,7 +45,7 @@
 		var _self = this;
 
 		// Default options
-		this.channels = ["~","*",".","%","$","#",";","^","<3",":gov","#rpg","@"];
+		this.channels = ["~","*",".","%","$","\\#",";","^","<3",":gov","\\#rpg","@"];
 		this.mode = 'single';
 
 		// internals
