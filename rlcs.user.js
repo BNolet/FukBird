@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RLCS
 // @namespace    http://tampermonkey.net/
-// @version      0.5 
+// @version      0.9 - Revamp 
 // @description  Chat-like functionality for Reddit Live
 // @author       FatherDerp, Stjerneklar
 // @include      https://www.reddit.com/live/*
@@ -9,6 +9,13 @@
 // @grant   GM_addStyle
 // ==/UserScript==                
 $(document).ready(function() {
+  
+$("body").append('<div id="rlc-main"><div id="rlc-chat"></div><div id="rlc-messagebox"></div></div><div id="rlc-sidebar"></div>');
+$('.liveupdate-listing').appendTo('#rlc-chat');
+$('#new-update-form').appendTo('#rlc-messagebox');
+$('#liveupdate-header').prependTo('#rlc-sidebar');
+$('#liveupdate-options').prependTo('#rlc-sidebar');
+$('.main-content aside.sidebar').appendTo('#rlc-sidebar');
   
   $(document).keydown(function(e){
       if (e.keyCode == 13) {
@@ -102,6 +109,21 @@ ol.liveupdate-listing { \
 } \
 .liveupdate-listing li.liveupdate {height: auto!important;overflow:visible;} \
 .footer-parent {    display: none; } \
+#rlc-main { \ 
+    width: 70%; \
+    height: 100%;\
+    position: fixed;\
+    top: 63px;\
+    left:0;\
+}\
+#rlc-sidebar {\
+    width: 30%;\
+    height: 100%;\
+    position: fixed;\
+    top: 63px;\
+    right:0;\
+  display:block;\
+}\
 ");
 });
 
