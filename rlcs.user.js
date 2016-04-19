@@ -348,7 +348,7 @@
 
             // Create inital markup
             this.$el.html("<span class='all selected'>Global</span><span><div class='rlc-filters'></div></span><span class='more'>[Channels]</span>");
-            this.$opt = $("<div class='rlc-channel-add' style='display:none'><input name='add-channel'><button>Add channel</button> <span class='channel-mode'>Channel Mode: <span title='View one channel at a time' data-type='single'>Single</span> | <span title='View many channels at once' data-type='multi'>Multi</span></span></div>").insertAfter(this.$el);
+            this.$opt = $("<div class='rlc-channel-add' style='display:none'><input name='add-channel'><button>Add channel</button> <span class='channel-mode'>Channel Mode: <span title='View one channel at a time' data-type='single'>All</span> | <span title='View many channels at once' data-type='multi'>Channels Only</span></span></div>").insertAfter(this.$el);
 
             // Attach events
             this.$el.find(".rlc-filters").click(this.toggle_channel);
