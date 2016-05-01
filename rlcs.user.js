@@ -29,7 +29,7 @@ ________________________________________________________________________________
 	if (!GM_getValue("rlc-TextToSpeech")) {             GM_setValue("rlc-TextToSpeech",				false);	}
 	if (!GM_getValue("rlc-TTS-SayName")) { 				GM_setValue("rlc-TTS-SayName", 				true);	}
 	if (!GM_getValue("rlc-RobinColors")) {              GM_setValue("rlc-RobinColors",				false);	}
-	if (!GM_getValue("rlc-BackgroundAlternation")) { 	GM_setValue("rlc-BackgroundAlternation",	false);	}
+	if (!GM_getValue("rlc-CSSBackgroundAlternation")) { 	GM_setValue("rlc-CSSBackgroundAlternation",	false);	}
 	if (!GM_getValue("rlc-DebugMode")) {                GM_setValue("rlc-DebugMode",				false);	}
 
 	// Grab users username + play nice with RES
