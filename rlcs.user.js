@@ -23,13 +23,14 @@
 ____________________________________________________________________________________________________________________________________________________________________________*/
 
 	// set default states for options
-	if (!GM_getValue("rlc-NoSmileys")) {                GM_setValue("rlc-NoSmileys",                false);}
-	if (!GM_getValue("rlc-ChannelColors")) {            GM_setValue("rlc-ChannelColors",            true);}
-	if (!GM_getValue("rlc-AutoScroll")) {               GM_setValue("rlc-AutoScroll",               true);}
-	if (!GM_getValue("rlc-TextToSpeech")) {             GM_setValue("rlc-TextToSpeech",             false);}
-	if (!GM_getValue("rlc-RobinColors")) {              GM_setValue("rlc-RobinColors",              false);}
-	if (!GM_getValue("rlc-CSSBackgroundAlternation")) { 	GM_setValue("rlc-CSSBackgroundAlternation", 	false);}
-	if (!GM_getValue("rlc-DebugMode")) {                GM_setValue("rlc-DebugMode",                false);}
+	if (!GM_getValue("rlc-NoSmileys")) {                GM_setValue("rlc-NoSmileys",				false);	}
+	if (!GM_getValue("rlc-ChannelColors")) {            GM_setValue("rlc-ChannelColors", 			true);	}
+	if (!GM_getValue("rlc-AutoScroll")) {               GM_setValue("rlc-AutoScroll",				true);	}
+	if (!GM_getValue("rlc-TextToSpeech")) {             GM_setValue("rlc-TextToSpeech",				false);	}
+	if (!GM_getValue("rlc-TTS-SayName")) { 				GM_setValue("rlc-TTS-SayName", 				true);	}
+	if (!GM_getValue("rlc-RobinColors")) {              GM_setValue("rlc-RobinColors",				false);	}
+	if (!GM_getValue("rlc-CSSBackgroundAlternation")) { 	GM_setValue("rlc-CSSBackgroundAlternation",	false);	}
+	if (!GM_getValue("rlc-DebugMode")) {                GM_setValue("rlc-DebugMode",				false);	}
 
 	// Grab users username + play nice with RES
 	var robinUser = $("#header-bottom-right .user a").first().text().toLowerCase();
@@ -46,7 +47,7 @@ ________________________________________________________________________________
 
 	// HTML for injection, inserted at doc.ready
 	var htmlPayload =  `<div id="rlc-sidebar">
-						<div id="rlc-main-sidebar"></div> 
+						<div id="rlc-main-sidebar"></div>
 						    <div id="rlc-readmebar">
 							    <div class="md">
 								    <strong style="font-size:1.2em">RLC Feature Guide</strong>
@@ -66,9 +67,9 @@ ________________________________________________________________________________
 								</div>
 							</div>
 						</div>
-						<div id="rlc-main">   
-							<div id="rlc-chat"></div> 
-					    </div> 
+						<div id="rlc-main">
+							<div id="rlc-chat"></div>
+					    </div>
 						<div id="rlc-messagebox">
 					        <select id="rlc-channel-dropdown">
 								<option></option>
@@ -78,9 +79,9 @@ ________________________________________________________________________________
 							</select>
 						</div>
 						<div id="rlc-settingsbar">
-							<div id="rlc-togglesidebar" title="Toggle Sidebar" class="noselect">Sidebar</div> 
-							<div id="rlc-toggleoptions" title="Show Options" class="noselect">Options</div> 
-							<div id="rlc-toggleguide" title="Show Guide" class="noselect">Readme</div> 
+							<div id="rlc-togglesidebar" title="Toggle Sidebar" class="noselect">Sidebar</div>
+							<div id="rlc-toggleoptions" title="Show Options" class="noselect">Options</div>
+							<div id="rlc-toggleguide" title="Show Guide" class="noselect">Readme</div>
 						</div>
 						<div id="myContextMenu">
 							<ul>
@@ -159,19 +160,19 @@ ________________________________________________________________________________
 	var activeUserArray = [],
 		activeUserTimes = [],
 		updateArray = [];
-	
+
 	// Update active user list
 	function processActiveUsersList() {
 		$("#rlc-activeusers ul").empty();
 		updateArray = [];
-		
+
 		for(let i = 0; i <= activeUserArray.length; i++){
 			if (updateArray.indexOf(activeUserArray[i]) === -1 && activeUserArray[i] !== undefined) {
 				updateArray.push(activeUserArray[i]);
 				$("#rlc-activeusers ul").append(`<li><span class='activeusersUser'>${activeUserArray[i]}</span> @ <span class='activeusersTime'>${activeUserTimes[i]}</span></li>`);
 			} else if (updateArray.indexOf(activeUserArray[i]) > -1) {
 				/* TODO: Add things.
-				
+
 				   Add message counter value
 				   Check if timestamp is recent enough? */
 			}
@@ -212,15 +213,15 @@ ________________________________________________________________________________
 101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010
 ____________________________________________________________________________________________________________________________________________________________________________*/
 
-	
+
 	// Numbers to english words for TTS
 	var digits = ["", "one ", "two ", "three ", "four ", "five ", "six ", "seven ", "eight ", "nine ", "ten ", "eleven ", "twelve ", "thirteen ", "fourteen ", "fifteen ", "sixteen ", "seventeen ", "eighteen ", "nineteen "],
 		tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
-	
+
 	function numberToEnglish (num) {
 		if ((num = num.toString()).length > 9) return "Overflow in numberToEnglish function.";
 		let n = ("000000000" + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-		
+
 		if (!n) return; var str = "";
 		str += (n[1] !== 0) ? (digits[Number(n[1])] || tens[n[1][0]] + " " + digits[n[1][1]]) + "crore " : "";
 		str += (n[2] !== 0) ? (digits[Number(n[2])] || tens[n[2][0]] + " " + digits[n[2][1]]) + "lakh " : "";
@@ -332,24 +333,24 @@ ________________________________________________________________________________
 	}
 
 	// emoji trigger list. supports multiple triggers for one emote(eg meh) and automaticly matches both upper and lower case letters(eg :o/:O)
-	var emojiList={	":)": "smile", 
-					":((": "angry", 
-					":(": "frown", 
-					":s": "silly", 
-					":I": "meh", 
-					":|": "meh", 
-					":/": "meh", 
-					":o": "shocked", 
-					":D": "happy", 
-					"D: ": "sad", 
-					";_;": "crying", 
-					"T_T": "crying", 
-					";)": "wink", 
-					"-_-": "zen", 
-					"X|": "annoyed", 
-					"X)": "xsmile", 
-					"X(": "xsad", 
-					"XD": "xhappy", 
+	var emojiList={	":)": "smile",
+					":((": "angry",
+					":(": "frown",
+					":s": "silly",
+					":I": "meh",
+					":|": "meh",
+					":/": "meh",
+					":o": "shocked",
+					":D": "happy",
+					"D: ": "sad",
+					";_;": "crying",
+					"T_T": "crying",
+					";)": "wink",
+					"-_-": "zen",
+					"X|": "annoyed",
+					"X)": "xsmile",
+					"X(": "xsad",
+					"XD": "xhappy",
 					":P": "tongue"};
 
 	function emoteSupport(line, $msg, firstLine) {
@@ -406,8 +407,8 @@ ________________________________________________________________________________
 
 		if ($("body").hasClass("rlc-24hrTimeStamps")) {
 			shortTime = convertTo24Hour(shortTime[3] + " " + amPm);
-		} else { 
-			shortTime = shortTime[3]+" "+amPm; 
+		} else {
+			shortTime = shortTime[3]+" "+amPm;
 		}
 
 		// Add simplified timestamps
@@ -423,7 +424,7 @@ ________________________________________________________________________________
 		processActiveUsersList();
 	}
 
-	
+
 	// I'm not even going to try to clear this up.
 	function messageClickHandler($usr, $msg, $el) {
 		var $menu = $("#myContextMenu");
@@ -436,9 +437,9 @@ ________________________________________________________________________________
 					$menu.css({"left":divPos["left"], "top":divPos["top"]-70, "display": "initial"}); //menu up
 				}
 
-				var $button = $(this).parent().siblings().find(".delete").find("button"); 
+				var $button = $(this).parent().siblings().find(".delete").find("button");
 				if ($button.length>0){
-					$menu.find("#deleteCom").removeClass("disabled"); 
+					$menu.find("#deleteCom").removeClass("disabled");
 				} else {
 					$menu.find("#deleteCom").addClass("disabled");
 				}
@@ -475,27 +476,27 @@ ________________________________________________________________________________
 	}
 
 	// Used differentiate initial and subsequent messages
-	var loadingInitialMessages = 1; 
+	var loadingInitialMessages = 1;
 
 	// Track if username has been mentioned
-	var meMentioned = 0; 
+	var meMentioned = 0;
 	// Message display handling for new and old (rescan) messages
 	// Add any proccessing for new messages in here
 	var handleNewMessage = function($el, rescan){
 		console.log(rescan);
-		
+
 		var $msg = $el.find(".body .md");
 		var $usr = $el.find(".body .author");
 		var line = $msg.text().toLowerCase();
 		var firstLine = $msg.find("p").first();
 
-		meMentioned = 0; 
+		meMentioned = 0;
 
 		// /me support
 		if (line.indexOf("/me") === 0){
 			$el.addClass("user-narration");
 			firstLine.html(firstLine.html().replace("/me", " " + $usr.text().replace("/u/", "")));
-			meMentioned = 1; 
+			meMentioned = 1;
 		}
 
 		// Target blank all message links
@@ -513,7 +514,7 @@ ________________________________________________________________________________
 		// Tag message with user identifier for muting
 		$el.addClass("u_"+$usr.text());
 
-		// Alternating background color   
+		// Alternating background color
 		alternateMsgBackground($el);
 
 		// Current User name mentioned
@@ -537,7 +538,7 @@ ________________________________________________________________________________
 		timeAndUserTracking($el, $usr);
 		messageUserColor($usr); // User color
 
-		messageClickHandler($usr, $msg, $el);  // Message click handling 
+		messageClickHandler($usr, $msg, $el);  // Message click handling
 
 		if (loadingInitialMessages === 0) {
 			// Stuff that should not be done to messages loaded on init, like TTS handling
@@ -603,40 +604,40 @@ ________________________________________________________________________________
 	}
 
 	// Select Emoji to narration tone
-	var toneList = {"smile": "with a smile", 
-					"angry": "angrily", 
-					"frown": "while frowning", 
-					"silly": "pulling a silly face", 
-					"meh": " in a disinterested manner", 
-					"shocked": "in shock", 
-					"happy": "happily", 
-					"sad": "sadly", 
-					"crying": "tearfully", 
-					"wink": " while winking", 
-					"zen": "in zen mode", 
-					"annoyed": "expressing annoyance", 
-					"xsmile": "with a big smile", 
-					"xsad": "very sadly", 
-					"xhappy": "very happily", 
+	var toneList = {"smile": "with a smile",
+					"angry": "angrily",
+					"frown": "while frowning",
+					"silly": "pulling a silly face",
+					"meh": " in a disinterested manner",
+					"shocked": "in shock",
+					"happy": "happily",
+					"sad": "sadly",
+					"crying": "tearfully",
+					"wink": " while winking",
+					"zen": "in zen mode",
+					"annoyed": "expressing annoyance",
+					"xsmile": "with a big smile",
+					"xsad": "very sadly",
+					"xhappy": "very happily",
 					"tongue": "while sticking out a tounge"};
 	// Abbreviation Expansion (All keys must be in uppercase)
-	var replaceStrList = {	"WTF": 
-							"What The Fuck", 
-							"BTW": "By The Way", 
-							"NVM": "Nevermind", 
-							"AFAIK": "As Far As I Know", 
-							"OFC": "Of Course", 
-							"AFK": "Away From Keyboard", 
-							"AKA": "Also Known As", 
-							"ASAP": "As Soon As Possible", 
-							"CYA": "See Ya", 
-							"IKR": "I Know Right", 
-							"IMO": "In My Own Opinion", 
-							"JK": "Just Kidding", 
-							"OMG": "Oh My God", 
-							"RTFM": "Read The Fucking Manual", 
-							"TLDR": "Too Long, Didn't Read", 
-							"FTW": "For The Win", 
+	var replaceStrList = {	"WTF":
+							"What The Fuck",
+							"BTW": "By The Way",
+							"NVM": "Nevermind",
+							"AFAIK": "As Far As I Know",
+							"OFC": "Of Course",
+							"AFK": "Away From Keyboard",
+							"AKA": "Also Known As",
+							"ASAP": "As Soon As Possible",
+							"CYA": "See Ya",
+							"IKR": "I Know Right",
+							"IMO": "In My Own Opinion",
+							"JK": "Just Kidding",
+							"OMG": "Oh My God",
+							"RTFM": "Read The Fucking Manual",
+							"TLDR": "Too Long, Didn't Read",
+							"FTW": "For The Win",
 							"FFS": "For Fucks Sake"};
 
 	var langSupport = ["en", "en-US", "ja", "es-US", "hi-IN", "it-IT", "nl-NL", "pl-PL", "ru-RU"];
@@ -647,7 +648,7 @@ ________________________________________________________________________________
 		}
 		return code % (1 + max - min) + min;
 	}
-	
+
 	function messageTextToSpeechHandler($msg, $usr) {
 		if (GM_getValue("rlc-TextToSpeech")) {
 			var linetoread = $msg.text().split("...").join("\u2026"); //replace 3 dots with elipsis character
@@ -660,7 +661,7 @@ ________________________________________________________________________________
 			if (!hasTripple) {
 				// Narrator logic based on content (Btw: http://www.regexpal.com/ is useful for regex testing)
 				var checkingStr = linetoread.trim(); // Trim spaces to make recognition easier
-				linetoread = linetoread.split(" ").map(function(token){ 
+				linetoread = linetoread.split(" ").map(function(token){
 					if ( token.toUpperCase() in replaceStrList ){return replaceStrList[token];} else {return token;}
 				}).join(" ");
 				// Emoji Detection (Btw: I am a little unconfortable with this function, since its relying on the second class of that span to always be the same )
@@ -681,33 +682,37 @@ ________________________________________________________________________________
 				}
 				// Narration Style
 				var msg;
-				switch (true) {
-				case /.+\?$/.test(checkingStr): // Questioned
-					msg = new SpeechSynthesisUtterance(linetoread + " questioned " + $usr.text() + toneStr );
-					break;
-				case /.+\!$/.test(checkingStr):   // Exclaimed
-					msg = new SpeechSynthesisUtterance(linetoread + " exclaimed " + $usr.text() + toneStr );
-					break;
-				case /.+[\\\/]s$/.test(checkingStr): // Sarcasm switch checks for /s or \s at the end of a sentence
-					linetoread = linetoread.trim().slice(0, -2);
-					msg = new SpeechSynthesisUtterance(linetoread + " stated " + $usr.text() + "sarcastically");
-					break;
-				case checkingStr === checkingStr.toUpperCase(): //Check for screaming
-					msg = new SpeechSynthesisUtterance(linetoread + " shouted " + $usr.text() + toneStr );
-					break;
-				case meMentioned === 1: //Check for /me 
-					msg = new SpeechSynthesisUtterance( linetoread  + toneStr  );
-					break;
-				default: // said
-					msg = new SpeechSynthesisUtterance(linetoread + " said " + $usr.text() + toneStr );
-					break;
+				if (!$("body").hasClass("rlc-TTS-SayName")) {
+					msg = new SpeechSynthesisUtterance(linetoread + toneStr);
+				} else {
+					switch (true) {
+					case /.+\?$/.test(checkingStr): // Questioned
+						msg = new SpeechSynthesisUtterance(linetoread + " questioned " + $usr.text() + toneStr );
+						break;
+					case /.+\!$/.test(checkingStr):   // Exclaimed
+						msg = new SpeechSynthesisUtterance(linetoread + " exclaimed " + $usr.text() + toneStr );
+						break;
+					case /.+[\\\/]s$/.test(checkingStr): // Sarcasm switch checks for /s or \s at the end of a sentence
+						linetoread = linetoread.trim().slice(0, -2);
+						msg = new SpeechSynthesisUtterance(linetoread + " stated " + $usr.text() + "sarcastically");
+						break;
+					case checkingStr === checkingStr.toUpperCase(): //Check for screaming
+						msg = new SpeechSynthesisUtterance(linetoread + " shouted " + $usr.text() + toneStr );
+						break;
+					case meMentioned === 1: //Check for /me
+						msg = new SpeechSynthesisUtterance(linetoread  + toneStr);
+						break;
+					default: // said
+						msg = new SpeechSynthesisUtterance(linetoread + " said " + $usr.text() + toneStr );
+						break;
+					}
 				}
 				RLClog("linetoread: "+linetoread);
 				// Now speak the sentence
 				// msg.voiceURI = 'native';
-				
+
 				// Set variable voice type
-				
+
 				if (!$("body").hasClass("rlc-NoUserVoices")){ // You want to be able to disable this in options.
 					// Select voices that english users can use, even if its not for english exactly...
 					var voiceList = speechSynthesis.getVoices().filter(function(voice) {
@@ -972,7 +977,7 @@ ________________________________________________________________________________
 			// else read from dropdown populated by channels
 			else {
 				let channelKey = $("#rlc-channel-dropdown option:selected" ).text();
-				
+
 				if (channelKey !== "") {
 					if ($("#new-update-form textarea").val().indexOf("/me") === 0){
 						$("#new-update-form textarea").val("/me " + channelKey + " " + $("#new-update-form textarea").val().substr(3));
@@ -1012,7 +1017,7 @@ ________________________________________________________________________________
 
 			// Update channel cache
 			this.updateChannelMatchCache();
-			
+
 			this.$el = $el;
 			// Create inital markup
 			this.$el.html("<span class='all selected'>Global</span><span><div class='rlc-filters'></div></span><span class='more'>[Channels]</span>");
@@ -1029,7 +1034,7 @@ ________________________________________________________________________________
 				if (chanID===null)return; // no a channel
 				_self.removeChannel(_self.channels[chanID]);
 			});
-			
+
 			// Form events
 			this.$opt.find(".channel-mode span").click(this.changeChannelMode);
 			this.$opt.find("button").click(function(){
@@ -1064,7 +1069,7 @@ ________________________________________________________________________________
 		lastTyped = "";
 
 	// Messagebox event handling
-	function messageboxEventHandling() { 
+	function messageboxEventHandling() {
 		var textArea = $(".usertext-edit.md-container textarea");
 
 		// On post message, add it to history
@@ -1086,7 +1091,7 @@ ________________________________________________________________________________
 				processActiveUsersList();
 				e.preventDefault();
 				var sourceAlt= $(".usertext-edit textarea").val();
-				var namePart = "";  
+				var namePart = "";
 				var space=sourceAlt.lastIndexOf(" ");
 				namePart = sourceAlt.substring(space).trim();
 				sourceAlt = sourceAlt.substring(0, sourceAlt.lastIndexOf(" "));
@@ -1144,7 +1149,7 @@ ________________________________________________________________________________
 	}
 
 
-	function mouseClicksEventHandling() { 
+	function mouseClicksEventHandling() {
 		// Right click author names in chat to copy to messagebox
 		$("body").on("contextmenu", ".liveupdate .author", function (event) {
 			if (!$("body").hasClass("rlc-altauthorclick")) {
@@ -1174,7 +1179,7 @@ ________________________________________________________________________________
 		$("#rlc-toggleguide").click(function(){     $("body").removeClass("rlc-showoptions");   $("body").toggleClass("rlc-showreadmebar");});
 		$("#rlc-sendmessage").click(function(){     $(".save-button .btn").click();});
 
-	}    
+	}
 
 
 /*¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
@@ -1277,7 +1282,7 @@ ________________________________________________________________________________
 		console.log("Liveupdate has been removed. I think. Pretty sure. Is that right?");
 		// TODO: do pre-mortem stuff here
 		// 'this' is still a reference to the element, before removing it
-	
+
 		// Lazy fucks.
 	});
 /*¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
@@ -1305,13 +1310,13 @@ ________________________________________________________________________________
 
 		scollToBottom();    //done adding/modding content, scroll to bottom
 
-		
+
 
 
 // some other js code here [...]
 
 
-		
+
 
 		/* dident work
 	$(window).scroll(function(e) {
@@ -1326,7 +1331,7 @@ ________________________________________________________________________________
 																			  RLC OPTIONS DEFINITION SECTION BELOW
 010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101
 101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010
-____________________________________________________________________________________________________________________________________________________________________________*/      
+____________________________________________________________________________________________________________________________________________________________________________*/
 
 		/* Create options */
 		createOption("Auto Scroll", function(checked){
@@ -1371,7 +1376,7 @@ ________________________________________________________________________________
 		createOption("Chrome Notifications", function(checked){
 			if (checked && Notification && !Notification.permission !== "granted"){
 				Notification.requestPermission();
-				if (checked){
+				if (checked) {
 					$("body").addClass("rlc-notificationchrome");
 				} else {
 					$("body").removeClass("rlc-notificationchrome");
@@ -1379,7 +1384,7 @@ ________________________________________________________________________________
 			}
 		},false);
 		createOption("Custom Scroll Bars", function(checked){
-			if (checked){
+			if (checked) {
 				$("body").addClass("rlc-customscrollbars");
 			} else {
 				$("body").removeClass("rlc-customscrollbars");
@@ -1387,14 +1392,14 @@ ________________________________________________________________________________
 			scollToBottom();
 		},false);
 		createOption("No Emotes", function(checked){
-			if (checked){
+			if (checked) {
 				$("body").addClass("rlc-noemotes");
 			} else {
 				$("body").removeClass("rlc-noemotes");
 			}
 		},false);
 		createOption("Text To Speech (TTS)", function(checked){
-			if (checked){
+			if (checked) {
 				$("body").addClass("rlc-TextToSpeech");
 			} else {
 				$("body").removeClass("rlc-TextToSpeech");
@@ -1402,21 +1407,28 @@ ________________________________________________________________________________
 			}
 		},false);
 		createOption("Disable User-based Voices", function(checked){
-			if (checked){
+			if (checked) {
 				$("body").addClass("rlc-NoUserVoices");
 			} else {
 				$("body").removeClass("rlc-NoUserVoices");
 			}
 		},false);
+		createOption("Disable TTS saying users' names", function(checked){
+			if (!checked) {
+				$("body").addClass("rlc-TTS-SayName");
+			} else {
+				$("body").removeClass("rlc-TTS-SayName");
+			}
+		},false);
 		createOption("Robin Colors", function(checked){
-			if (checked){
+			if (checked) {
 				$("body").addClass("rlc-RobinColors");
 			} else {
 				$("body").removeClass("rlc-RobinColors");
 			}
 		},false);
 		createOption("24-hour Timestamps", function(checked){
-			if (checked){
+			if (checked) {
 				$("body").addClass("rlc-24hrTimeStamps");
 			} else {
 				$("body").removeClass("rlc-24hrTimeStamps");
@@ -1430,7 +1442,7 @@ ________________________________________________________________________________
 			}
 		},false);
 		createOption("Debug Mode", function(checked){
-			if (checked){
+			if (checked) {
 				$("body").addClass("rlc-DebugMode");
 			} else {
 				$("body").removeClass("rlc-DebugMode");
