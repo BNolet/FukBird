@@ -1,4 +1,4 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @name         RLC
 // @namespace    http://tampermonkey.net/
 // @version      3.7.1
@@ -746,7 +746,7 @@ ________________________________________________________________________________
 	}
 
 	function messageTextToSpeechHandler($msg, $usr) {
-		if (GM_getValue("rlc-TextToSpeechTTS")) { 
+		if (GM_getValue("rlc-TextToSpeechTTS")) {
 		if($msg.text().length<250){
 				var linetoread = $msg.text().split("...").join("\u2026"); //replace 3 dots with elipsis character
 				var hasTripple = /(.)\1\1/.test(linetoread);
