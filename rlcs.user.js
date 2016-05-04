@@ -1,4 +1,4 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name         RLC
 // @namespace    http://tampermonkey.net/
 // @version      3.7.14
