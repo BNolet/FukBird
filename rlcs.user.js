@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           RLC
-// @version        3.9.3
+// @version        3.9.4
 // @description    Chat-like functionality for Reddit Live
 // @author         FatherDerp
 // @contributor    Stjerneklar, thybag, mofosyne, jhon, 741456963789852123, MrSpicyWeiner, Concerned Hobbit (TheVarmari), Kretenkobr2
@@ -558,7 +558,9 @@ function createOptions() {
     }
 
     // emoji trigger list. supports multiple triggers for one emote(eg meh) and automaticly matches both upper and lower case letters(eg :o/:O)
-    var emojiList={	":)": "smile",
+    var emojiList={
+                   "3:D": "evilsmile",
+                   ":)": "smile",
                    ":((": "angry",
                    ":(": "frown",
                    ":s": "silly",
@@ -576,8 +578,7 @@ function createOptions() {
                    "X)": "xsmile",
                    "X(": "xsad",
                    "XD": "xhappy",
-                   "ZXY": "evilsmile",
-                   "STJ": "stjerneklar",
+                   "STJERN": "stjerneklar",
                    ":P": "tongue"};
 
     function emoteSupport(line, $msg, firstLine) {
@@ -979,7 +980,8 @@ function createOptions() {
     }
 
     // Select Emoji to narration tone
-    var toneList = {"smile":   "smiling",
+    var toneList = {"evilsmile": "with an evil smile",
+                    "smile":   "smiling",
                     "angry":   "angrily",
                     "frown":   "while frowning",
                     "silly":   "pulling a silly face",
@@ -994,7 +996,9 @@ function createOptions() {
                     "xsmile":  "with a grinning broadly",
                     "xsad":    "very sadly",
                     "xhappy":  "very happily",
-                    "tongue":  "while sticking out a tongue"};
+                    "tongue":  "while sticking out a tongue",
+    	            "stjerneklar": "to stjerneklar"
+    };
 
     // Abbreviation Expansion (All keys must be in uppercase)
     var replaceStrList = {
