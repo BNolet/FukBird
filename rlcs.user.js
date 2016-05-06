@@ -578,7 +578,7 @@ function createOptions() {
                    "X)": "xsmile",
                    "X(": "xsad",
                    "XD": "xhappy",
-                   "STJ": "stjerneklar",
+                   "STJERN": "stjerneklar",
                    ":P": "tongue"};
 
     function emoteSupport(line, $msg, firstLine) {
@@ -996,7 +996,9 @@ function createOptions() {
                     "xsmile":  "with a grinning broadly",
                     "xsad":    "very sadly",
                     "xhappy":  "very happily",
-                    "tongue":  "while sticking out a tongue"};
+                    "tongue":  "while sticking out a tongue",
+    	            "stjerneklar": "to stjerneklar"
+    };
 
     // Abbreviation Expansion (All keys must be in uppercase)
     var replaceStrList = {
