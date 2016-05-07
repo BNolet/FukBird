@@ -1094,7 +1094,8 @@ function messageTextToSpeechHandler($msg, $usr) {
                 //idea: if username is a lot of numbers, call them by the first 3 numbers seperated 
                 if (usr == "741456963789852123") { usr = "7 4 1"; } 
                 if (usr == "Kretenkobr2") { usr = "KretenkobrTwo"; }
-                if (usr == "s3cur1ty") { return false; }
+                if (usr == "s3cur1ty") { usr = "Security"; }
+                if (usr == "Stjerneklar") { usr = "Steeairneklaahr"; }
 
                 if (!GM_getValue("rlc-TTSUsernameNarration")) {
                     msg = new SpeechSynthesisUtterance(linetoread + toneStr);
