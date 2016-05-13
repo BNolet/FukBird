@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name           RLC
-// @version        3.15.7
+// @version        3.16
 // @description    Chat-like functionality for Reddit Live
 // @author         FatherDerp & Stjerneklar
-// @contributor    thybag, mofosyne, jhon, FlamingObsidian, MrSpicyWeiner, TheVarmari, Kretenkobr2
+// @contributor    thybag, mofosyne, jhon, FlamingObsidian, MrSpicyWeiner, TheVarmari, Kretenkobr2, dashed
 // @website        https://github.com/BNolet/RLC/
 // @namespace      http://tampermonkey.net/
 // @include        https://www.reddit.com/live/*
@@ -397,7 +397,7 @@
 
         // After creation of a new channel, go find if any content (not matched by a channel already) is relevant
         this.reScanChannels = function(){
-            $("#rlc-chat").find("li.liveupdate").each(function(idx,item){
+            $("#rlc-chat").find("li.rlc-message").each(function(idx,item){
                 var line = $(item).find(".body .md").text().toLowerCase();
                 tabbedChannels.proccessLine(line, $(item), true);
             });
@@ -613,8 +613,8 @@
     for(var c = 0; c < 10; c++){  // c reduced from 35
         color = colors[(c % (colors.length))];
 
-        colorcollection = colorcollection + `#rlc-main.show-colors #rlc-chat li.liveupdate.rlc-filter-${c} { background: ${color};}`;
-        colorcollection = colorcollection + `#rlc-chat.rlc-filter.rlc-filter-${c} li.liveupdate.rlc-filter-${c} { display:block;}`;
+        colorcollection = colorcollection + `#rlc-main.show-colors #rlc-chat li.rlc-message.rlc-filter-${c} { background: ${color};}`;
+        colorcollection = colorcollection + `#rlc-chat.rlc-filter.rlc-filter-${c} li.rlc-message.rlc-filter-${c} { display:block;}`;
     }
     GM_addStyle(colorcollection);
 
@@ -1062,7 +1062,7 @@
 
     function alternateMsgBackground($el) {
             if (loadHistoryMessageException === 0) {
-                var $child = $('.liveupdate-listing:not(.muted)').children()[1];
+                var $child = $('.rlc-message-listing:not(.muted)').children()[1];
                 rowAlternator=($($child).hasClass('alt-bgcolor'));
             }else{
                 rowAlternator=!rowAlternator;
@@ -1075,8 +1075,8 @@
     function reAlternate($objComment){
         if($objComment===undefined){
             var alt=false;
-            for(i=$('.liveupdate-listing').children().length;i>=0;i--){
-                var obj=$('.liveupdate-listing').children()[i];
+            for(i=$('.rlc-message-listing').children().length;i>=0;i--){
+                var obj=$('.rlc-message-listing').children()[i];
                 if(!$(obj).hasClass('muted')){
                     $(obj).removeClass('alt-bgcolor');
                     if(alt){
@@ -1088,16 +1088,16 @@
         }else{
             var found;
             var alt;
-            for(i=$('.liveupdate-listing').children().length;i>=0;i--){
-                var obj=$('.liveupdate-listing').children()[i];
+            for(i=$('.rlc-message-listing').children().length;i>=0;i--){
+                var obj=$('.rlc-message-listing').children()[i];
                 if(obj == $objComment.context) {
                     found=true;
-                    alt = $($('.liveupdate-listing').children()[i+1]).hasClass("alt-bgcolor");
+                    alt = $($('.rlc-message-listing').children()[i+1]).hasClass("alt-bgcolor");
                 }
                 if(found){
-                    $($('.liveupdate-listing').children()[i]).removeClass('alt-bgcolor');
+                    $($('.rlc-message-listing').children()[i]).removeClass('alt-bgcolor');
                     if(alt){
-                        $($('.liveupdate-listing').children()[i]).addClass('alt-bgcolor');
+                        $($('.rlc-message-listing').children()[i]).addClass('alt-bgcolor');
                     }
                     alt=!alt;
                 }
@@ -1203,7 +1203,7 @@
 
 // meta msg functs
     function cropMessages(max) {
-        $( ".liveupdate" ).each(function( index ) {
+        $( ".rlc-message" ).each(function( index ) {
             if (index > max) {
                 $( this ).remove();
             }
@@ -1254,6 +1254,68 @@
 	        setTimeout(function(){ loadHistoryMessageException = 0; }, 1000);  
 	    }
 
+/* new new message */
+
++function(){
+
+    $.getJSON("/live/wpytzw1guzg2/about.json", function(data) {
+
+        var websocket_url = data.data.websocket_url;
+        
+        console.log('websocket_url', websocket_url);
+
+        var ws = new WebSocket(websocket_url);
+
+        ws.onmessage = function (evt) { 
+            var msg = JSON.parse(evt.data);
+
+            switch(msg.type) {
+            case 'update':
+
+                var payload = msg.payload.data;
+                console.log(payload);    
+                var usr = payload.author;
+                var msg = payload.body_html;
+                var created = payload.created;
+
+                var utcSeconds = created;
+                var readAbleDate = new Date(0); // The 0 there is the key, which sets the date to the epoch
+                readAbleDate.setUTCSeconds(utcSeconds);
+
+                var finaltimestamp = readAbleDate.toDateString();
+
+                var fakeMessage = `
+                <li class="rlc-message">
+                    <div class="body"><div class="md"><p>${payload.body}</p></div>
+                        <div class="simpletime">${finaltimestamp}</div>
+                        <a href="/user/${payload.author}" class="author">${payload.author}</a>
+                    </div>
+                    <ul class="buttonrow">
+                        <li><span class="strike confirm-button"><button>strike</button></span></li>
+                        <li><span class="delete confirm-button"><button>delete</button></span></li>
+                    </ul>
+                </li>`
+                $(".rlc-message-listing").prepend(fakeMessage);
+                //$(".rlc-message-listing").prepend(handleNewMessage(usr,msg,created,true));
+
+                break;
+
+            case 'activity':
+
+                var payload = msg.payload;
+                //console.log('user count', payload.count);    
+                
+                break;
+            }
+
+        };
+
+    });
+
+}();
+
+
+
 //
 //   /$$   /$$/$$$$$$$$/$$      /$$       /$$      /$$/$$$$$$$$ /$$$$$$  /$$$$$$  /$$$$$$  /$$$$$$ /$$$$$$$$
 //  | $$$ | $| $$_____| $$  /$ | $$      | $$$    /$$| $$_____//$$__  $$/$$__  $$/$$__  $$/$$__  $| $$_____/
@@ -1299,9 +1361,9 @@
 
         // remove the oldest message if there are more than 25 if that option is on.
         if (GM_getValue("rlc-MaxMessages25")){
-            var totalmessages = $(".liveupdate").length;
+            var totalmessages = $(".rlc-message").length;
             if (totalmessages > maxmessages) {
-                $(".liveupdate").last().remove();
+                $(".rlc-message").last().remove();
             }        
         }
 
@@ -1365,7 +1427,7 @@
         tabbedChannels.proccessLine(line, $el, rescan);
 
         // Timestamp modification & user activity tracking
-        timeAndUserTracking($el, $usr);
+        //timeAndUserTracking($el, $usr);
         
         //finds iframes
         var embedFinder = $msg.find("iframe").length;
@@ -1651,7 +1713,7 @@
 
     function mouseClicksEventHandling() {
         // Right click author names in chat to copy to messagebox
-        $("body").on("click", ".liveupdate .author", function (event) {
+        $("body").on("click", ".rlc-message .author", function (event) {
             event.preventDefault();
             let username = String($(this).text()).trim();
             let source = String($(".usertext-edit.md-container textarea").val());
@@ -1664,13 +1726,13 @@
             embedLinker($(this).parent().parent());
         });
         
-        $("body").on("click", ".liveupdate.rlc-hasEmbed .body .md", function (event) {
+        $("body").on("click", ".rlc-message.rlc-hasEmbed .body .md", function (event) {
             event.preventDefault();
             alert("This");
             //$(this).find("a").click();
         });
         
-        $("body").on("contextmenu", ".liveupdate .author", function (event) {
+        $("body").on("contextmenu", ".rlc-message .author", function (event) {
             event.preventDefault();
             $el = $(this).parent().parent();
             var $menu = $("#myContextMenu");
@@ -1788,7 +1850,11 @@
                     </div>
                     <div id="rlc-leftPanel"> &nbsp; </div>
                     <div id="rlc-main">
-                        <div id="rlc-chat"></div>
+                        <div id="rlc-chat">
+                            <ol class="rlc-message-listing">
+
+                            </ol>
+                        </div>
                         <div id="rlc-messagebox">
                             <select id="rlc-channel-dropdown">
                                 <option></option>
@@ -1832,11 +1898,11 @@
       $("body").append(htmlPayload);
 
       // move various reddit live elements to RLCs custom HTML
-      $(".liveupdate-listing").prependTo("#rlc-chat");
+      $("").prependTo("#rlc-chat");
       $("#new-update-form").insertBefore("#rlc-sendmessage");
-      $("#liveupdate-header").appendTo("#rlc-header #rlc-titlebar");
-      $("#liveupdate-statusbar").appendTo("#rlc-header #rlc-statusbar");
-      $("#liveupdate-resources").appendTo("#rlc-sidebar #rlc-main-sidebar");
+      $("#rlc-message-header").appendTo("#rlc-header #rlc-titlebar");
+      $("#rlc-message-statusbar").appendTo("#rlc-header #rlc-statusbar");
+      $("#rlc-message-resources").appendTo("#rlc-sidebar #rlc-main-sidebar");
  
       // start up filter tabs by inserting them
       tabbedChannels.init($("<div id=\"filter_tabs\"></div>").insertBefore("#rlc-chat"));
@@ -1845,16 +1911,16 @@
     function rlcParseSidebar() {
 
         // Put anything after -RLC-README- in the sidebar into the readme
-        let str = $("#liveupdate-resources .md").html();
+        let str = $("#rlc-message-resources .md").html();
         if (typeof str !== "undefined") {
             let res = str.split("<p>--RLC-SIDEBAR-GUIDE--</p>");
-            $("#liveupdate-resources .md").html(res[0]);
+            $("#rlc-message-resources .md").html(res[0]);
             $("#rlc-readmebar .md").append(res[1]);
 
             // Put anything before -RLC-MAIN- in the sidebar into the guide
-            str = $("#liveupdate-resources .md").html();
+            str = $("#rlc-message-resources .md").html();
             res = str.split("<p>--RLC-SIDEBAR-MAIN--</p>");
-            $("#liveupdate-resources .md").html(res[1]);
+            $("#rlc-message-resources .md").html(res[1]);
             $("#rlc-guidebar .md").append(res[0]);
         }
         $("#rlc-main-sidebar").append("<div id='rlc-activeusers'><ul></ul></div>");
@@ -1887,12 +1953,13 @@
     function rlcInitEventListeners() {
 
         // Detect new content being added
-        $(".liveupdate-listing").on("DOMNodeInserted", function(e) {
-            if ($(e.target).is("li.liveupdate")) {
+        $(".rlc-message-listing").on("DOMNodeInserted", function(e) {
+            if ($(e.target).is("li.rlc-message")) {
 
                 // Apply changes to line
                 handleNewMessage($(e.target), false);
                 scrollToBottom();
+                console.log("ping");
 
             }
             // Remove separators
@@ -1942,7 +2009,7 @@
         rowAlternator=!rowAlternator;
 
         // run the new message handling function on each message in the chat window. the value of "true" is sent to represent that this is a "rescan", meaning that certain code is not run. see handleNewMessage.
-        $("#rlc-chat").find("li.liveupdate").each(function(idx,item){
+        $("#rlc-chat").find("li.rlc-message").each(function(idx,item){
             handleNewMessage($(item), true);
         });
         
@@ -2063,7 +2130,7 @@ img.rlc-image {
     margin-top: 0
 }
 
-#rlc-messagebox .md,#rlc-messagebox .usertext,header#liveupdate-header {
+#rlc-messagebox .md,#rlc-messagebox .usertext,header#rlc-message-header {
     max-width: none
 }
 
@@ -2096,29 +2163,29 @@ div#rlc-settings label {
     margin: 0
 }
 
-header#liveupdate-header {
+header#rlc-message-header {
     margin: 0!important;
     padding: 15px
 }
 
-h1#liveupdate-title:before {
+h1#rlc-message-title:before {
     content: "chat in "
 }
 
-h1#liveupdate-title {
+h1#rlc-message-title {
     font-size: 1.5em;
     float: left;
     padding: 0
 }
 
-#rlc-header #liveupdate-statusbar {
+#rlc-header #rlc-message-statusbar {
     margin: 0;
     padding: 0;
     border: none!important;
     background-color: transparent
 }
 
-#rlc-wrapper .liveupdate .body {
+#rlc-wrapper .rlc-message .body {
     max-width: none!important;
     margin: 0;
     font-size: 13px;
@@ -2168,7 +2235,7 @@ div#rlc-sidebar {
     margin-top: 30px
 }
 
-#rlc-main .liveupdate-listing {
+#rlc-main .rlc-message-listing {
     max-width: 100%;
     padding: 0 0 0 15px;
     box-sizing: border-box;
@@ -2224,7 +2291,7 @@ div#rlc-sidebar {
     margin-right: 0
 }
 
-.liveupdate .simpletime {
+.rlc-message .simpletime {
     float: left;
     padding-left: 10px;
     box-sizing: border-box;
@@ -2233,7 +2300,7 @@ div#rlc-sidebar {
     line-height: 32px
 }
 
-.liveupdate a.author {
+.rlc-message a.author {
     float: left;
     padding-right: 10px;
     margin: 0;
@@ -2242,14 +2309,14 @@ div#rlc-sidebar {
     width: 130px
 }
 
-.liveupdate-listing li.liveupdate .body .md {
+.rlc-message-listing li.rlc-message .body .md {
     float: right;
     width: calc(100% - 220px);
     max-width: none;
     box-sizing: border-box
 }
 
-li.liveupdate.in-channel .body .md {
+li.rlc-message.in-channel .body .md {
     width: calc(100% - 320px)
 }
 
@@ -2298,20 +2365,20 @@ li.liveupdate.in-channel .body .md {
     padding-top: 5px
 }
 
-.liveupdate.user-narration .body .md {
+.rlc-message.user-narration .body .md {
     font-style: italic
 }
 
-.liveupdate.user-mention .body .md p {
+.rlc-message.user-mention .body .md p {
     font-weight: 700
 }
 
-.liveupdate a.author,.liveupdate p {
+.rlc-message a.author,.rlc-message p {
     line-height: 32px;
     min-height: 32px
 }
 
-#liveupdate-description {
+#rlc-message-description {
     margin-left: 10px;
     float: left
 }
@@ -2320,7 +2387,7 @@ li.liveupdate.in-channel .body .md {
     max-width: none!important
 }
 
-.liveupdate-listing li.liveupdate p {
+.rlc-message-listing li.rlc-message p {
     font-size: 13px!important
 }
 
@@ -2335,7 +2402,7 @@ div#rlc-togglebar {
     padding-right: 10px
 }
 
-.liveupdate pre {
+.rlc-message pre {
     margin: 0;
     padding: 0;
     max-width: 90%;
@@ -2581,7 +2648,7 @@ body.allowHistoryScroll {
     }
 }
 
-#filter_tabs,#hsts_pixel,.bottom-area,.content,.debuginfo,.footer-parent,.rlc-channel-add,.rlc-compact #header,.rlc-hideChannelsInGlobal .liveupdate.in-channel,.rlc-showChannelsUI .rlc-filter .liveupdate,.save-button,.user-narration a.author {
+#filter_tabs,#hsts_pixel,.bottom-area,.content,.debuginfo,.footer-parent,.rlc-channel-add,.rlc-compact #header,.rlc-hideChannelsInGlobal .rlc-message.in-channel,.rlc-showChannelsUI .rlc-filter .rlc-message,.save-button,.user-narration a.author {
     display: none
 }
 
@@ -2609,11 +2676,11 @@ body.allowHistoryScroll {
     border: 1px solid rgba(227,227,224,.85)
 }
 
-.liveupdate time.live-timestamp,.liveupdate ul.buttonrow {
+.rlc-message time.live-timestamp,.rlc-message ul.buttonrow {
     display: none!important
 }
 
-#filter_tabs,#liveupdate-resources h2,#myContextMenu,#rlc-guidebar,#rlc-readmebar,#rlc-settings,select#rlc-channel-dropdown {
+#filter_tabs,#rlc-message-resources h2,#myContextMenu,#rlc-guidebar,#rlc-readmebar,#rlc-settings,select#rlc-channel-dropdown {
     display: none
 }
 
