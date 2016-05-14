@@ -238,7 +238,7 @@
         createOption("Max Messages 25", function(checked){
             if (checked){
                 if (loadHistoryMessageException != 1) {
-                    cropMessages(5);
+                    cropMessages(25);
                 }
             } else {
 
@@ -1352,7 +1352,7 @@
                     $msgbody = $("<textarea/>").html($msgbody).val() 
                    
                     var fakeMessage = `
-                    <li class="rlc-message rlc-id-${msgID}">
+                    <li class="rlc-message" name="rlc-id-${msgID}">
                         <div class="body">${$msgbody}
                             <div class="simpletime">${finaltimestamp}</div>
                             <a href="/user/${usr}" class="author">${usr}</a>
@@ -1392,7 +1392,7 @@
     // Used differentiate initial and subsequent messages
     var loadHistoryMessageException = 1;
     
-    var maxmessages = 5;
+    var maxmessages = 25;
         
     // note from stjern: no reason to set these for every message
     var hexArray    = GM_getValue("hexArrayStore", "") || []; //initialize hex and usr lookup list variables
@@ -1493,8 +1493,8 @@
             // if we had a link and splitting it at space results in an undefined aza, the only thing in the message was the link.
             if (typeof aza === "undefined") { 
                 $el.addClass("rlc-hasEmbed");
-                var $dede = $msg.find("a").clone().addClass("embedLinkClone");
-                $dede.insertBefore($msg);
+              /*  var $dede = $msg.find("a").clone().addClass("embedLinkClone");
+                $dede.insertBefore($msg);*/
             }
         }
 
@@ -1736,8 +1736,12 @@
         });
     }
 
+    // show the linked content in the left panel
+    // rewritten to find the original liveupdate and take the iframe from there 
     function embedLinker($el){
-        var $msg = $el.find(".body .md");
+        var selectorstring = "." + $el.attr("name").split("rlc-")[1];
+        var $liveupdateEl = $(selectorstring);
+        var $msg = $liveupdateEl.find(".body .md");
         $("#rlc-leftPanel").empty();
                 $("#rlc-leftPanel").append("&nbsp;");
             $("#rlc-leftPanel").append($msg.find("iframe").clone());
@@ -1769,15 +1773,9 @@
             $(".usertext-edit.md-container textarea").focus().val(source + " " + username + " ");
         });
         
-        $("body").on("contextmenu", ".embedLinkClone", function (event) {
+        $("body").on("contextmenu", ".rlc-message.rlc-hasEmbed .body .md", function (event) {
             event.preventDefault();
             embedLinker($(this).parent().parent());
-        });
-        
-        $("body").on("click", ".rlc-message.rlc-hasEmbed .body .md", function (event) {
-            event.preventDefault();
-            alert("This");
-            //$(this).find("a").click();
         });
         
         $("body").on("contextmenu", ".rlc-message .author", function (event) {
@@ -1888,7 +1886,7 @@
                     <div id="rlc-header">
                         <div id="rlc-titlebar">
                             <div id="rlc-togglebar">
-                                <div id="togglebarLoadHist">Load History</div>
+                              <!--  <div id="togglebarLoadHist">Load History</div> !-->
                                 <div id="togglebarTTS">TextToSpeech</div>
                                 <div id="togglebarAutoscroll">Autoscroll</div>
                                 <div class="selected" id="togglesidebar">Sidebar</div>
@@ -2890,15 +2888,6 @@ body.rlc-customBg #rlc-wrapper,body.rlc-customBg #rlc-wrapper .md,.rlc-customBg 
     width: 20%;
     float: left;
 display:block;
-}
-
-.rlc-hasEmbed .md {
-display: none!important;
-}
-
-a.embedLinkClone {
-    width: calc(100% - 220px);
-    float: right;
 }
 
 `);
