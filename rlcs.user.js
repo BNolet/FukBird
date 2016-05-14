@@ -1281,7 +1281,10 @@
                 var utcSeconds = created;
                 var readAbleDate = new Date(0); // The 0 there is the key, which sets the date to the epoch
                 readAbleDate.setUTCSeconds(utcSeconds);
-
+                    
+                    // super intuitive alternative i guess
+                    console.log('posted at', new Date(payload.created_utc * 1000));
+                    
                 var finaltimestamp = readAbleDate.toLocaleTimeString();
 
                 var fakeMessage = `
