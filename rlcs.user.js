@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           RLC
-// @version        3.17
+// @version        3.17.3
 // @description    Chat-like functionality for Reddit Live
 // @author         FatherDerp & Stjerneklar
 // @contributor    thybag, mofosyne, jhon, FlamingObsidian, MrSpicyWeiner, TheVarmari, Kretenkobr2, dashed
@@ -158,9 +158,6 @@
             }
             // Correct scroll after spam filter change
         },false, "give channels background colors");
-
-        createOption("24-hour Timestamps", function(checked){
-        },false, "11 PM / 23:00 (existing messages are not modified)");
 
         createOption("Show Channels UI", function(checked){
             if (checked){
@@ -1033,25 +1030,7 @@
     // Timestamp modification & user activity tracking
     function timeAndUserTracking($el, $usr) {
         var shortTime = $el.find(".simpletime");
-
-/*        var amPm = shortTime[4].toLowerCase();
-
-        if (!(amPm === "am" || amPm === "pm")) { amPm = " "; }
-
-        var militarytime = convertTo24Hour(shortTime[3] + " " + amPm);
-        if (GM_getValue("rlc-24hourTimestamps")){
-            shortTime = convertTo24Hour(shortTime[3] + " " + amPm);
-        } else {
-            shortTime = shortTime[3]+" "+amPm;
-        }
-*/
-  /*
-        // Add simplified timestamps
-        if ($el.find(".body .simpletime").length <= 0) {
-            $el.find(".body time").before(`<div class='simpletime'>${shortTime}</div>`);
-        }
-*/
-    
+   
         // Add info to activeuserarray
         activeUserArray.push($usr.text());
         //activeUserTimes.push(militarytime);
@@ -1235,43 +1214,6 @@
         }
     };
 
-	    // Manipulate native reddit live into loading old messages
-	    function loadHistory() {
-	        loadHistoryMessageException = 1;     //this variable is checked in new message function to prevent 
-	        								     //tts/notifications from messages loaded this way. while operating, we set it to one to "enable" it.
-	        
-	        /* summary for the following 3 lines of code(all manipulating the $("body")):
-
-				This is a very hacky way of getting old messages to load.
-				In native reddit live rooms, you can scroll down to load older messages, as only the first 25 messages in a room are shown normaly.
-				This method is purely based on the observation that scrolling the body html element to the bottom causes the load.
-				
-				In RLC we dont let the user scroll the body element, since we put the messages inside an interface that is either in a box or full size.
-				Allowing users to scroll the body element would trigger constant unintended loading of old messages.
-
-				The loadHistory function uses this behavior in a controlled manner, applying a css class to the body html element which does two things:
-				Set the bodys vertical scroll to scroll rather than overflow, and expand the body to 105%, causing scrolling to become possible.
-				(note, this is probably why it does not work in firefox)
-
-				The second line involving scrollHeight scrolls the body to the bottom, triggering the now possible load event.
-
-				The third line simply removes the body class that was enabling the scrolling behavior. 
-
-	        */
-	        $("body").addClass("allowHistoryScroll");
-
-	        $("body").scrollTop($("body")[0].scrollHeight);
-	        
-	        $("body").removeClass("allowHistoryScroll");
-	        
-	        // scroll the chat window to the bottom. this is required in order to be able to trigger load history,
-	        // since both the body and the chat window must be at bottom scroll position to force native history loading.
-	        scrollToBottom();					
-			
-			//after waiting a second to be sure messages are loaded, "disable" the variable.
-	        setTimeout(function(){ loadHistoryMessageException = 0; }, 1000);  
-	    }
-
 /* new new message */
 +function(){
 
@@ -1362,8 +1304,48 @@
                 });
             });
         ajaxLoadCurrentMessages.complete(function() {
-            loading_initial_messages = 0;
+            loadHistoryMessageException = 0;
         });
+
+
+function getOldMessages() {
+      // load the 25 most recent messages via getJSON calling the rooms .json info 
+   loadHistoryMessageException = 1;
+     var lastMessageName = $(".rlc-message:last-child").attr("name").split("rlc-id-")[1];  
+     var ajaxLoadOldMessages =     $.getJSON( ".json?after="+lastMessageName, function( data ) {
+                var oldmessages = data.data.children;  //navigate the data to the object containing the messages
+                $.each( oldmessages, function( ) {
+                    var msg = $(this).toArray()[0].data; //navigate to the message data level we want
+                    //console.log(msg);
+                    var msgID = msg.name;
+                    var $msgbody = msg.body_html;
+                    var usr = msg.author;
+                    var utcSeconds = msg.created_utc;
+                    
+                    // translate created_utc to a human readable version
+                    var readAbleDate = new Date(0); // The 0 there is the key, which sets the date to the epoch
+                    readAbleDate.setUTCSeconds(utcSeconds);
+                    
+                    var finaltimestamp = readAbleDate.toLocaleTimeString().replace(".", ":").split(".")[0];
+
+                    // Unescaped html escaped string by way of crazy voodo magic.
+                    $msgbody = $("<textarea/>").html($msgbody).val() 
+                   
+                    var fakeMessage = `
+                    <li class="rlc-message" name="rlc-id-${msgID}">
+                        <div class="body">${$msgbody}
+                            <div class="simpletime">${finaltimestamp}</div>
+                            <a href="/user/${usr}" class="author">${usr}</a>
+                        </div>
+                    </li>`
+                    $(".rlc-message-listing").append(fakeMessage);
+                });
+            });
+        ajaxLoadOldMessages.complete(function() {
+            loadHistoryMessageException = 0;
+               reAlternate();
+        });
+}
 
 
 //
@@ -1834,7 +1816,7 @@
 
         // Load old messages
         $("#togglebarLoadHist").click(function(){
-            loadHistory();
+            getOldMessages();
         });
                 
         // Easy access options
@@ -1886,7 +1868,7 @@
                     <div id="rlc-header">
                         <div id="rlc-titlebar">
                             <div id="rlc-togglebar">
-                              <!--  <div id="togglebarLoadHist">Load History</div> !-->
+                                <div id="togglebarLoadHist">Load History</div>
                                 <div id="togglebarTTS">TextToSpeech</div>
                                 <div id="togglebarAutoscroll">Autoscroll</div>
                                 <div class="selected" id="togglesidebar">Sidebar</div>
