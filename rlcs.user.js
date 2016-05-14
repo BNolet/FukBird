@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           RLC
-// @version        3.16
+// @version        3.17
 // @description    Chat-like functionality for Reddit Live
 // @author         FatherDerp & Stjerneklar
 // @contributor    thybag, mofosyne, jhon, FlamingObsidian, MrSpicyWeiner, TheVarmari, Kretenkobr2, dashed
@@ -1008,6 +1008,20 @@
         }
     }
 
+    function abbrSupport(line, $msg, firstLine) {
+     if ( firstLine.html() != null ){ // This is usually for excluding embedded, code or other content that doesn't use html representation
+         htmTok = firstLine.html().split(" ");
+         htmTok = htmTok.map(function(tokenStr){
+             var replaceStrList_key = tokenStr.trim().replace(/[^\x20-\x7E]/gmi, "").toUpperCase(); // Strip trailing space and newlines with conversion to newline
+             if ( replaceStrList_key in replaceStrList ){
+                 return `<abbr title="${replaceStrList[replaceStrList_key]}">${tokenStr}</abbr>`;
+             }
+             return tokenStr;
+         });
+         firstLine.html(htmTok.join(" "));
+     }
+    }
+
     // Time converter for active user list
     function convertTo24Hour(time) {
         var hours = parseInt(time.substr(0, 2));
@@ -1421,6 +1435,9 @@
         // Emote support
         emoteSupport(line, $msg, firstLine);
 
+        // Abbrev Support
+        abbrSupport(line, $msg, firstLine);
+
         // Easy (and hacky) multiline
         $msg.html($msg.html().split("\n").join("<br>"));
         $msg.html($msg.html().replace("<br><br>","<br>"));
@@ -1485,8 +1502,6 @@
             // Add bold highlighting
             $el.addClass("user-mention");
         }
-
-        //firstLine.html(firstLine.html() + " ");
 
         // Stuff that should not be done to messages loaded on init, like TTS handling
         if (loadHistoryMessageException === 0) {
@@ -1962,7 +1977,6 @@
                 // Apply changes to line
                 handleNewMessage($(e.target), false);
                 scrollToBottom();
-                console.log("ping");
 
             }
             // Remove separators
