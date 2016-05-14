@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           RLC
-// @version        3.17.2
+// @version        3.17
 // @description    Chat-like functionality for Reddit Live
 // @author         FatherDerp & Stjerneklar
 // @contributor    thybag, mofosyne, jhon, FlamingObsidian, MrSpicyWeiner, TheVarmari, Kretenkobr2, dashed
@@ -1273,29 +1273,29 @@
 	    }
 
 /* new new message */
-
 +function(){
 
     $.getJSON("/live/wpytzw1guzg2/about.json", function(data) {
 
         var websocket_url = data.data.websocket_url;
         
-        console.log('websocket_url', websocket_url);
+        //console.log('websocket_url', websocket_url);
 
         var ws = new WebSocket(websocket_url);
 
         ws.onmessage = function (evt) { 
             var msg = JSON.parse(evt.data);
 
-            console.log(msg);
+           // console.log(msg);
             
             switch(msg.type) {
             case 'update':
 
                 var payload = msg.payload.data;
-                console.log(payload);    
+                //console.log(payload);    
                 var usr = payload.author;
                 var msgbody = payload.body_html;
+                var msgID = payload.name;
                 
                 var created = payload.created_utc;
                 var utcSeconds = created;
@@ -1308,7 +1308,7 @@
                 var finaltimestamp = readAbleDate.toLocaleTimeString().replace(".", ":").split(".")[0];
 
                 var fakeMessage = `
-                <li class="rlc-message">
+                <li class="rlc-message rlc-id-${msgID}">
                     <div class="body">${msgbody}
                         <div class="simpletime">${finaltimestamp}</div>
                         <a href="/user/${usr}" class="author">${usr}</a>
@@ -1319,7 +1319,7 @@
 
             case 'activity':
 
-                var payload = msg.payload;
+                //var payload = msg.payload;
                 //console.log('user count', payload.count);    
                 
                 break;
@@ -1331,31 +1331,36 @@
 
 }();
 
-      var ajaxLoadCurrentMessages = $.getJSON( ".json", function( data ) {
-            var oldmessages = data.data.children;
-            $.each( oldmessages, function( ) {
-                var x = $(this).toArray()[0].data;
-                var $msgbody = x.body;
-                var usr = x.author;
-                var utcSeconds = x.created_utc;
-                var readAbleDate = new Date(0); // The 0 there is the key, which sets the date to the epoch
-                readAbleDate.setUTCSeconds(utcSeconds);
+      // load the 25 most recent messages via getJSON calling the rooms .json info 
+      var ajaxLoadCurrentMessages =     $.getJSON( ".json", function( data ) {
+                var oldmessages = data.data.children;  //navigate the data to the object containing the messages
+                $.each( oldmessages, function( ) {
+                    var msg = $(this).toArray()[0].data; //navigate to the message data level we want
+                    //console.log(msg);
+                    var msgID = msg.name;
+                    var $msgbody = msg.body_html;
+                    var usr = msg.author;
+                    var utcSeconds = msg.created_utc;
                     
-                    // super intuitive alternative i guess
-                    //console.log('posted at', new Date(payload.created_utc * 1000));
+                    // translate created_utc to a human readable version
+                    var readAbleDate = new Date(0); // The 0 there is the key, which sets the date to the epoch
+                    readAbleDate.setUTCSeconds(utcSeconds);
                     
-                var finaltimestamp = readAbleDate.toLocaleTimeString().replace(".", ":").split(".")[0];
+                    var finaltimestamp = readAbleDate.toLocaleTimeString().replace(".", ":").split(".")[0];
 
-                var fakeMessage = `
-                <li class="rlc-message">
-                    <div class="body">${$msgbody}
-                        <div class="simpletime">${finaltimestamp}</div>
-                        <a href="/user/${usr}" class="author">${usr}</a>
-                    </div>
-                </li>`
-                $(".rlc-message-listing").append(fakeMessage);
+                    // Unescaped html escaped string by way of crazy voodo magic.
+                    $msgbody = $("<textarea/>").html($msgbody).val() 
+                   
+                    var fakeMessage = `
+                    <li class="rlc-message rlc-id-${msgID}">
+                        <div class="body">${$msgbody}
+                            <div class="simpletime">${finaltimestamp}</div>
+                            <a href="/user/${usr}" class="author">${usr}</a>
+                        </div>
+                    </li>`
+                    $(".rlc-message-listing").append(fakeMessage);
+                });
             });
-        });
         ajaxLoadCurrentMessages.complete(function() {
             loading_initial_messages = 0;
         });
