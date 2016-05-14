@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           RLC
-// @version        3.17
+// @version        3.17.1
 // @description    Chat-like functionality for Reddit Live
 // @author         FatherDerp & Stjerneklar
 // @contributor    thybag, mofosyne, jhon, FlamingObsidian, MrSpicyWeiner, TheVarmari, Kretenkobr2, dashed
@@ -1032,8 +1032,9 @@
 
     // Timestamp modification & user activity tracking
     function timeAndUserTracking($el, $usr) {
-        var shortTime = $el.find(".body time").attr("title").split(" ");
-        var amPm = shortTime[4].toLowerCase();
+        var shortTime = $el.find(".simpletime");
+
+/*        var amPm = shortTime[4].toLowerCase();
 
         if (!(amPm === "am" || amPm === "pm")) { amPm = " "; }
 
@@ -1043,15 +1044,18 @@
         } else {
             shortTime = shortTime[3]+" "+amPm;
         }
-
+*/
+  /*
         // Add simplified timestamps
         if ($el.find(".body .simpletime").length <= 0) {
             $el.find(".body time").before(`<div class='simpletime'>${shortTime}</div>`);
         }
-
+*/
+    
         // Add info to activeuserarray
-        activeUserArray.push($usr.text().replace("/u/", ""));
-        activeUserTimes.push(militarytime);
+        activeUserArray.push($usr.text());
+        //activeUserTimes.push(militarytime);
+        activeUserTimes.push(shortTime.text());
 
         // Moved here to add user activity from any time rather than only once each 10 secs. (Was in tab tick function, place it back there if performance suffers)
         processActiveUsersList();
@@ -1299,22 +1303,16 @@
                     // super intuitive alternative i guess
                     console.log('posted at', new Date(payload.created_utc * 1000));
                     
-                var finaltimestamp = readAbleDate.toLocaleTimeString();
+                var finaltimestamp = readAbleDate.toLocaleTimeString().replace(".", ":").split(".")[0];
 
                 var fakeMessage = `
                 <li class="rlc-message">
-                    <div class="body"><div class="md"><p>${payload.body}</p></div>
+                    <div class="body">${msg}</div>
                         <div class="simpletime">${finaltimestamp}</div>
-                        <a href="/user/${payload.author}" class="author">${payload.author}</a>
+                        <a href="/user/${usr}" class="author">${usr}</a>
                     </div>
-                    <ul class="buttonrow">
-                        <li><span class="strike confirm-button"><button>strike</button></span></li>
-                        <li><span class="delete confirm-button"><button>delete</button></span></li>
-                    </ul>
                 </li>`
                 $(".rlc-message-listing").prepend(fakeMessage);
-                //$(".rlc-message-listing").prepend(handleNewMessage(usr,msg,created,true));
-
                 break;
 
             case 'activity':
@@ -1372,9 +1370,11 @@
 
         //variables used troughout the function, all relating to the currently proccessed message
         var $msg        = $el.find(".body .md");
-        var $usr        = $el.find(".body .author");
+        var $usr        = $el.find(".author");
         var line        = $msg.text().toLowerCase();
         var firstLine   = $msg.find("p").first();
+        
+        console.log($usr);
 
         // remove the oldest message if there are more than 25 if that option is on.
         if (GM_getValue("rlc-MaxMessages25")){
@@ -1405,8 +1405,6 @@
             }
         }
         
-
-
         // /me support (if in channel see proccessline)
         if (line.indexOf("/me") === 0){
             $el.addClass("user-narration");
@@ -1417,14 +1415,14 @@
         $usr.text($usr.text().replace("/u/", ""));
         }
 
+                // Timestamp modification & user activity tracking
+        timeAndUserTracking($el, $usr);
+        
         // long message collapsing
         collapseLongMessage($msg,firstLine);
 
         // Target blank all message links
         $msg.find("a").attr("target", "_blank");
-
-        // Insert time
-        $usr.before($el.find("time"));
 
         // Tag message with user identifier for muting
         $el.addClass("u_"+$usr.text());
@@ -1446,8 +1444,7 @@
         // Track channels
         tabbedChannels.proccessLine(line, $el, rescan);
 
-        // Timestamp modification & user activity tracking
-        //timeAndUserTracking($el, $usr);
+
         
         //finds iframes
         var embedFinder = $msg.find("iframe").length;
@@ -1755,7 +1752,7 @@
             $el = $(this).parent().parent();
             var $menu = $("#myContextMenu");
             var $msg = $el.find(".body .md");
-            var $usr = $el.find(".body .author");
+            var $usr = $el.find(".author");
             var thisPos = $el.position();
             var divPos = {
                 left: thisPos.left,
