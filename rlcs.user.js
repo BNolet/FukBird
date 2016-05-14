@@ -1276,13 +1276,13 @@
                 console.log(payload);    
                 var usr = payload.author;
                 var msg = payload.body_html;
-                var created = payload.created;
-
+                
+                var created = payload.created_utc;
                 var utcSeconds = created;
                 var readAbleDate = new Date(0); // The 0 there is the key, which sets the date to the epoch
                 readAbleDate.setUTCSeconds(utcSeconds);
 
-                var finaltimestamp = readAbleDate.toDateString();
+                var finaltimestamp = readAbleDate.toLocaleTimeString();
 
                 var fakeMessage = `
                 <li class="rlc-message">
