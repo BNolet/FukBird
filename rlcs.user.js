@@ -1944,11 +1944,10 @@
       $("body").append(htmlPayload);
 
       // move various reddit live elements to RLCs custom HTML
-      $("").prependTo("#rlc-chat");
       $("#new-update-form").insertBefore("#rlc-sendmessage");
-      $("#rlc-message-header").appendTo("#rlc-header #rlc-titlebar");
-      $("#rlc-message-statusbar").appendTo("#rlc-header #rlc-statusbar");
-      $("#rlc-message-resources").appendTo("#rlc-sidebar #rlc-main-sidebar");
+      $("#liveupdate-header").appendTo("#rlc-header #rlc-titlebar");
+      $("#liveupdate-statusbar").appendTo("#rlc-header #rlc-statusbar");
+      $("#liveupdate-resources").appendTo("#rlc-sidebar #rlc-main-sidebar");
  
       // start up filter tabs by inserting them
       tabbedChannels.init($("<div id=\"filter_tabs\"></div>").insertBefore("#rlc-chat"));
@@ -2052,12 +2051,7 @@
  
         // not really sure, but related to message background alternation
         rowAlternator=!rowAlternator;
-
-        // run the new message handling function on each message in the chat window. the value of "true" is sent to represent that this is a "rescan", meaning that certain code is not run. see handleNewMessage.
-       // $(".liveupdate-listing").find("li").each(function(idx,item){
-       //     $(".rlc-message-listing").append($(this).addClass("rlc-message"));
-       // });
-        
+      
         // wait for iframes, and then scroll the chat window to the bottom.
         setTimeout(scrollToBottom, 500);
         setTimeout(function(){loadHistoryMessageException = 0}, 500);
@@ -2175,7 +2169,7 @@ img.rlc-image {
     margin-top: 0
 }
 
-#rlc-messagebox .md,#rlc-messagebox .usertext,header#rlc-message-header {
+#rlc-messagebox .md,#rlc-messagebox .usertext,header#liveupdate-header {
     max-width: none
 }
 
@@ -2208,22 +2202,22 @@ div#rlc-settings label {
     margin: 0
 }
 
-header#rlc-message-header {
+header#liveupdate-header {
     margin: 0!important;
     padding: 15px
 }
 
-h1#rlc-message-title:before {
+h1#liveupdate-title:before {
     content: "chat in "
 }
 
-h1#rlc-message-title {
+h1#liveupdate-title {
     font-size: 1.5em;
     float: left;
     padding: 0
 }
 
-#rlc-header #rlc-message-statusbar {
+#rlc-header #liveupdate-statusbar {
     margin: 0;
     padding: 0;
     border: none!important;
