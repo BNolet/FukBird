@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           RLC
-// @version        3.17.1
+// @version        3.17.2
 // @description    Chat-like functionality for Reddit Live
 // @author         FatherDerp & Stjerneklar
 // @contributor    thybag, mofosyne, jhon, FlamingObsidian, MrSpicyWeiner, TheVarmari, Kretenkobr2, dashed
@@ -238,7 +238,7 @@
         createOption("Max Messages 25", function(checked){
             if (checked){
                 if (loadHistoryMessageException != 1) {
-                    cropMessages(25);
+                    cropMessages(5);
                 }
             } else {
 
@@ -1287,13 +1287,15 @@
         ws.onmessage = function (evt) { 
             var msg = JSON.parse(evt.data);
 
+            console.log(msg);
+            
             switch(msg.type) {
             case 'update':
 
                 var payload = msg.payload.data;
                 console.log(payload);    
                 var usr = payload.author;
-                var msg = payload.body_html;
+                var msgbody = payload.body_html;
                 
                 var created = payload.created_utc;
                 var utcSeconds = created;
@@ -1301,13 +1303,13 @@
                 readAbleDate.setUTCSeconds(utcSeconds);
                     
                     // super intuitive alternative i guess
-                    console.log('posted at', new Date(payload.created_utc * 1000));
+                    //console.log('posted at', new Date(payload.created_utc * 1000));
                     
                 var finaltimestamp = readAbleDate.toLocaleTimeString().replace(".", ":").split(".")[0];
 
                 var fakeMessage = `
                 <li class="rlc-message">
-                    <div class="body">${msg}</div>
+                    <div class="body">${msgbody}
                         <div class="simpletime">${finaltimestamp}</div>
                         <a href="/user/${usr}" class="author">${usr}</a>
                     </div>
@@ -1329,6 +1331,34 @@
 
 }();
 
+      var ajaxLoadCurrentMessages = $.getJSON( ".json", function( data ) {
+            var oldmessages = data.data.children;
+            $.each( oldmessages, function( ) {
+                var x = $(this).toArray()[0].data;
+                var $msgbody = x.body;
+                var usr = x.author;
+                var utcSeconds = x.created_utc;
+                var readAbleDate = new Date(0); // The 0 there is the key, which sets the date to the epoch
+                readAbleDate.setUTCSeconds(utcSeconds);
+                    
+                    // super intuitive alternative i guess
+                    //console.log('posted at', new Date(payload.created_utc * 1000));
+                    
+                var finaltimestamp = readAbleDate.toLocaleTimeString().replace(".", ":").split(".")[0];
+
+                var fakeMessage = `
+                <li class="rlc-message">
+                    <div class="body">${$msgbody}
+                        <div class="simpletime">${finaltimestamp}</div>
+                        <a href="/user/${usr}" class="author">${usr}</a>
+                    </div>
+                </li>`
+                $(".rlc-message-listing").append(fakeMessage);
+            });
+        });
+        ajaxLoadCurrentMessages.complete(function() {
+            loading_initial_messages = 0;
+        });
 
 
 //
@@ -1357,7 +1387,7 @@
     // Used differentiate initial and subsequent messages
     var loadHistoryMessageException = 1;
     
-    var maxmessages = 25;
+    var maxmessages = 5;
         
     // note from stjern: no reason to set these for every message
     var hexArray    = GM_getValue("hexArrayStore", "") || []; //initialize hex and usr lookup list variables
@@ -1374,8 +1404,6 @@
         var line        = $msg.text().toLowerCase();
         var firstLine   = $msg.find("p").first();
         
-        console.log($usr);
-
         // remove the oldest message if there are more than 25 if that option is on.
         if (GM_getValue("rlc-MaxMessages25")){
             var totalmessages = $(".rlc-message").length;
@@ -1386,7 +1414,7 @@
 
         //handle giphy images 
         if (!GM_getValue("rlc-HideGiphyImages")){        
-            if (line.indexOf("rlc-image") === 0){
+            if (line.trim().indexOf("rlc-image") === 0){
                 var linksObj = $msg.find("a");
                 var url = linksObj.attr("href");
                 if (url) {
@@ -2023,9 +2051,9 @@
         rowAlternator=!rowAlternator;
 
         // run the new message handling function on each message in the chat window. the value of "true" is sent to represent that this is a "rescan", meaning that certain code is not run. see handleNewMessage.
-        $("#rlc-chat").find("li.rlc-message").each(function(idx,item){
-            handleNewMessage($(item), true);
-        });
+       // $(".liveupdate-listing").find("li").each(function(idx,item){
+       //     $(".rlc-message-listing").append($(this).addClass("rlc-message"));
+       // });
         
         // wait for iframes, and then scroll the chat window to the bottom.
         setTimeout(scrollToBottom, 500);
