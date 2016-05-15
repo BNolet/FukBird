@@ -77,14 +77,15 @@
         }
         // Render option
         var $option = $(`<label id='option-${key}'><input type='checkbox' ${checkedMarkup}>${name}<span>${description}</span></label>`).click(function(e){
-            var checked = $(this).find("input").is(":checked");
 
-            // exit click handler if event is not being callled on the checkbox.
-            // sidesteps the issue that the event fires multiple times when clicking anything other than the checkbox.
+            // capture only checkbox's event
             var target = $( e.target );
             if ( !target.is( "input" ) ) {
-                return false;
+                return;
             }
+
+            var checked = $(this).find("input").is(":checked");
+
             //console.log("option set to "+checked);
 
             // Persist state
