@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           RLC
-// @version        3.18.20
+// @version        3.18.21
 // @description    Chat-like functionality for Reddit Live
 // @author         FatherDerp & Stjerneklar
 // @contributor    Kretenkobr2, thybag, mofosyne, jhon, FlamingObsidian, MrSpicyWeiner, TheVarmari, dashed
@@ -194,7 +194,7 @@
             }
         },false, "hide in-channel messages in global tab (the channel must added for this to work)");
 
-        createOption("Notification Sound", function(checked){
+        createOption("Mentioned Notification Sound", function(checked){
         },false, "play sound when you are mentioned");
 
         createOption("Chrome Notifications", function(checked){
@@ -202,6 +202,9 @@
                 Notification.requestPermission();
             }
         },false, "show notice when you are mentioned");
+        
+        createOption("Notification Sound", function(checked){
+        },false, "play sound when there is new message");
 
         createOption("Chrome Scroll Bars", function(checked){
             if (checked){
@@ -1769,8 +1772,8 @@ function messageFaker(msg) {
 
             scrollToBottom();
 
-            if (line.indexOf(robinUser) !== -1){
-                if (GM_getValue("rlc-NotificationSound")){
+            if (line.indexOf(robinUser) !== -1 && !document.hasFocus()){
+                if (GM_getValue("rlc-MentionedNotificationSound")){
                     snd.play();
                 }
                 if (GM_getValue("rlc-ChromeNotifications")){
@@ -1780,6 +1783,11 @@ function messageFaker(msg) {
                     });
                 }
             }
+            if(GM_getValue("rlc-NotificationSound") && !document.hasFocus())
+                {
+                    snd.play();
+                }
+            
             //if option is checked, check if message user is "robin" user and do not play if so
             if (GM_getValue("rlc-TTSDisableSelfnarration")){
                 if ($usr.text().toLowerCase().indexOf(robinUser) != -1){
