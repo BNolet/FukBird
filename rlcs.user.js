@@ -31,13 +31,13 @@
 //  ██║  ██║███████╗╚██████╗    ██║██║ ╚████║   ██║   ██║  ██║╚██████╔╝
 //  ╚═╝  ╚═╝╚══════╝ ╚═════╝    ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ 
 
-                                                                    
-    //    Welcome to Reddit Live Chat source code, enjoy your visit.
-    //    Please group your variables with the relevant functions and follow existing structure.
-    //    (Unless you are willing to rewrite the structure into something more sane)
-    //    To get a good idea of whats going on, start from window.load near the bottom.
-    //    I recommend using Sublime Text when browsing this file as these comment blocks are readable from the minimap.
-    //      - Stjerneklar
+                                                                     
+    //     Welcome to Reddit Live Chat source code, enjoy your visit.
+    //     Please group your variables with the relevant functions and follow existing structure.
+    //     (Unless you are willing to rewrite the structure into something more sane)
+    //     To get a good idea of whats going on, start from window.load near the bottom.
+    //     I recommend using Sublime Text when browsing this file as these comment blocks are readable from the minimap.
+    //       - Stjerneklar
 
 
 //  ██████╗ ██╗      ██████╗     ██████╗ ██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
